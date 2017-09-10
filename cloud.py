@@ -1,5 +1,16 @@
 import paho.mqtt.client as mqtt
 import json
+import urllib.request
+
+def greatCircleDistance( coords_1, coords_2 ):
+ url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins={0}, {1}&destinations={2}, {3}&key= AIzaSyAhpEf5XIFeMDdPYvembz7WWWh5ryRTO-0".format(coords_1[0], coords_1[1], coords_2[0], coords_2[1])
+ webURL = urllib.request.urlopen(url)
+ print(webURL.read())
+ result = json.loads(webURL.read())
+ driving_time = result['rows'][0]['elements'][0]['duration']['value']
+ print("driving time: {0}".format(driving_time))
+
+ return result
 
 # The callback for when the client successfully connects to the broker
 def on_connect(client, userdata, flags, rc):
@@ -17,8 +28,11 @@ def on_message(client, userdata, msg):
         data = json.loads(str(msg.payload, 'ascii'))
         print(data)
         print("TID = {0} is currently at {1}, {2}".format(data['tid'], data['lat'], data['lon']))
+        coords_1 = (data['lat'], data['lon'])
+        coords_2 = (-22.5827088, -47.400379699999995)
+        print("Distance Logic {0}: {1}".format(coords_2, greatCircleDistance(coords_1, coords_2)))
     except Exception as e:
-        print("Cannot decode data on topic {0}\n{1}".format(topic, e))
+        print("Error: {0}".format(e))
 
 client = mqtt.Client()
 client.on_connect = on_connect
