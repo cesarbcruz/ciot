@@ -1,3 +1,3 @@
 # CIOT
 
- Owntracks + CloudMQTT + Home Assistant + Raspberry pi 2
+Python + CloudMQTT + Raspberry pi 2
