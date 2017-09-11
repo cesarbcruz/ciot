@@ -1,14 +1,15 @@
 import paho.mqtt.client as mqtt
-import json
-import urllib.request
+import urllib.request, json
 
-def greatCircleDistance( coords_1, coords_2 ):
- url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins={0}, {1}&destinations={2}, {3}&key= AIzaSyAhpEf5XIFeMDdPYvembz7WWWh5ryRTO-0".format(coords_1[0], coords_1[1], coords_2[0], coords_2[1])
- webURL = urllib.request.urlopen(url)
- print(webURL.read())
- result = json.loads(webURL.read())
- driving_time = result['rows'][0]['elements'][0]['duration']['value']
- print("driving time: {0}".format(driving_time))
+
+def geo( coords_1, coords_2 ):
+ url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=-22.3757058,-47.3937795&destinations=-22.5827088,-47.400379699999995&key=%20AIzaSyAhpEf5XIFeMDdPYvembz7WWWh5ryRTO-0"
+ with urllib.request.urlopen(url) as url:
+    result = json.loads(url.read().decode())
+
+ driving_time = result['rows'][0]['elements'][0]['duration']['text']
+ distance_time = result['rows'][0]['elements'][0]['distance']['text']
+ print("distance: {0} | driving time: {1}".format(distance_time, driving_time))
 
  return result
 
@@ -30,7 +31,7 @@ def on_message(client, userdata, msg):
         print("TID = {0} is currently at {1}, {2}".format(data['tid'], data['lat'], data['lon']))
         coords_1 = (data['lat'], data['lon'])
         coords_2 = (-22.5827088, -47.400379699999995)
-        print("Distance Logic {0}: {1}".format(coords_2, greatCircleDistance(coords_1, coords_2)))
+        geo(coords_1, coords_2)
     except Exception as e:
         print("Error: {0}".format(e))
 
