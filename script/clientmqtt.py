@@ -20,12 +20,22 @@ def geo( coords_1 ):
  origin_addresses = result['origin_addresses'][0]
  destination_addresses = result['destination_addresses'][0]
  driving_time = result['rows'][0]['elements'][0]['duration']['text']
- distance_time = result['rows'][0]['elements'][0]['distance']['text']
+ distance = result['rows'][0]['elements'][0]['distance']['text']
  print("Endereço origem: {0}".format(origin_addresses))
  print("Endereço destino: {0}".format(destination_addresses))
- print("Distância: {0}".format(distance_time))
+ print("Distância: {0}".format(distance))
  print("Tempo de Carro: {0}".format(driving_time))
- print("\n")
+
+ data = {
+ 'latitude' : coords_1[0],
+ 'longitude' : coords_1[1],
+ 'endereco' : origin_addresses,
+ 'distancia' : result['rows'][0]['elements'][0]['distance']['value'],
+ 'tempo_de_carro' : result['rows'][0]['elements'][0]['duration']['value']
+ }
+ data = bytes(json.dumps(data), 'utf8')
+ handler = urllib.request.urlopen( 'http://localhost:8000/core/atualizarlocalizacao', data);
+ print('Atulizar localização: {0}'.format(handler.read().decode('utf-8')));
 
  return result
 
