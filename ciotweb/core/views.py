@@ -40,8 +40,9 @@ class IndexView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
         localizacao = localizacao = Localizacao.objects.all().first()
+        context['google_maps_api_key'] = localizacao.google_maps_api_key
         if localizacao:
-            context['origem'] = "{0}, {1}".format(localizacao.latitude , localizacao.longitude)
+            context['origem'] = "{0}, {1}".format(localizacao.latitude, localizacao.longitude)
         configuracao = Configuracao.objects.all().first()
         if configuracao:
             context['destino'] = "{0}, {1}".format(configuracao.latitude, configuracao.longitude)
