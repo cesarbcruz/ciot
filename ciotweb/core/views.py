@@ -2,6 +2,9 @@ from django.http import HttpResponse
 from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
 import json
+
+from django.views.generic import TemplateView
+
 from core.models import Configuracao, Localizacao
 
 def obterconfiguracao(request):
@@ -29,3 +32,17 @@ def atualizarlocalizacao(request):
             localizacao.save()
 
     return HttpResponse("OK")
+
+
+class IndexView(TemplateView):
+    template_name = "index.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(IndexView, self).get_context_data(**kwargs)
+        localizacao = localizacao = Localizacao.objects.all().first()
+        if localizacao:
+            context['origem'] = "{0}, {1}".format(localizacao.latitude , localizacao.longitude)
+        configuracao = Configuracao.objects.all().first()
+        if configuracao:
+            context['destino'] = "{0}, {1}".format(configuracao.latitude, configuracao.longitude)
+        return context
