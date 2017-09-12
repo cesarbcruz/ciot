@@ -2,8 +2,18 @@ import paho.mqtt.client as mqtt
 import urllib.request, json
 
 
-def geo( coords_1, coords_2 ):
- url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins={0},{1}&destinations={2},{3}&key=%20AIzaSyAhpEf5XIFeMDdPYvembz7WWWh5ryRTO-0".format(coords_1[0], coords_1[1], coords_2[0], coords_2[1])
+def obter_configuracao():
+ url = "http://localhost:8000/core/obterconfiguracao"
+ with urllib.request.urlopen(url) as url:
+    result = json.loads(url.read().decode())
+ return result
+
+
+def geo( coords_1 ):
+ conf =  obter_configuracao()
+ coords_2 = (conf[0]['fields']['latitude'], conf[0]['fields']['longitude'])
+ api_key = conf[0]['fields']['google_distancematrix_api_key']
+ url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins={0},{1}&destinations={2},{3}&key={4}".format(coords_1[0], coords_1[1], coords_2[0], coords_2[1], api_key)
  with urllib.request.urlopen(url) as url:
     result = json.loads(url.read().decode())
 
@@ -29,8 +39,7 @@ def on_message(client, userdata, msg):
     try:
         data = json.loads(str(msg.payload, 'ascii'))
         coords_1 = (data['lat'], data['lon'])
-        coords_2 = (-22.375454, -47.393242)
-        geo(coords_1, coords_2)
+        geo(coords_1)
     except Exception as e:
         print("Error: {0}".format(e))
 
