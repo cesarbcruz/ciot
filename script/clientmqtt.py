@@ -12,7 +12,7 @@ def obter_configuracao():
 def geo( coords_1 ):
  conf =  obter_configuracao()
  coords_2 = (conf[0]['fields']['latitude'], conf[0]['fields']['longitude'])
- api_key = conf[0]['fields']['google_distancematrix_api_key']
+ api_key = conf[0]['fields']['google_maps_api_key']
  url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins={0},{1}&destinations={2},{3}&key={4}".format(coords_1[0], coords_1[1], coords_2[0], coords_2[1], api_key)
  with urllib.request.urlopen(url) as url:
     result = json.loads(url.read().decode())
