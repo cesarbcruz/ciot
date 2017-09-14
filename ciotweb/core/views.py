@@ -34,17 +34,33 @@ def atualizarlocalizacao(request):
     return HttpResponse("OK")
 
 
-class IndexView(TemplateView):
-    template_name = "index.html"
+class HomeView(TemplateView):
+    template_name = "home.html"
 
     def get_context_data(self, **kwargs):
-        context = super(IndexView, self).get_context_data(**kwargs)
+        context = super(HomeView, self).get_context_data(**kwargs)
+        context['opcao'] = 'home'
         localizacao = localizacao = Localizacao.objects.all().first()
-
         if localizacao:
             context['origem'] = "{0}, {1}".format(localizacao.latitude, localizacao.longitude)
         configuracao = Configuracao.objects.all().first()
         if configuracao:
             context['destino'] = "{0}, {1}".format(configuracao.latitude, configuracao.longitude)
             context['google_maps_api_key'] = configuracao.google_maps_api_key
+        return context
+
+class ControleView(TemplateView):
+    template_name = "controle.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(ControleView, self).get_context_data(**kwargs)
+        context['opcao'] = 'controle'
+        return context
+
+class ConfiguracaoView(TemplateView):
+    template_name = "configuracao.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(ConfiguracaoView, self).get_context_data(**kwargs)
+        context['opcao'] = 'configuracao'
         return context
