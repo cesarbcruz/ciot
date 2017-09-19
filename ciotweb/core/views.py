@@ -4,7 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 
 from django.views.generic import TemplateView
-
+from core import PrevisaoTempo as previsaoTempo
 from core.models import Configuracao, Localizacao
 
 def obterconfiguracao(request):
@@ -47,6 +47,13 @@ class HomeView(TemplateView):
         if configuracao:
             context['destino'] = "{0}, {1}".format(configuracao.latitude, configuracao.longitude)
             context['google_maps_api_key'] = configuracao.google_maps_api_key
+            previsao = previsaoTempo.obter(configuracao.latitude, configuracao.longitude)
+            context['temperaturacasa'] = str(round(previsao['main']['temp'], 1))
+            context['nebulosidadecasa'] = str(previsao['clouds']['all']) + ' %'
+            context['umidadecasa'] = str(previsao['main']['humidity']) + ' %'
+            context['cidadecasa'] = str(previsao['name'])
+            context['descricaotempocasa'] = str(previsao['weather'][0]['description'])
+            context['iconetempocasa'] = str(previsao['weather'][0]['icon'])
         return context
 
 class ControleView(TemplateView):
