@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
@@ -5,7 +6,8 @@ import json
 
 from django.views.generic import TemplateView
 from core import PrevisaoTempo as previsaoTempo
-from core.models import Configuracao, Localizacao
+from core.models import Configuracao, Localizacao, PerfilUsuario
+
 
 def obterconfiguracao(request):
     configuracao_as_json = serializers.serialize('json', Configuracao.objects.filter(habilitado=True))
@@ -40,9 +42,22 @@ class HomeView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
         context['opcao'] = 'home'
+
+        if self.request.user.is_authenticated():
+            perfil = PerfilUsuario.objects.filter(usuario=self.request.user)
+            context['perfilusuario'] = perfil[0]
+
         localizacao = localizacao = Localizacao.objects.all().first()
         if localizacao:
             context['origem'] = "{0}, {1}".format(localizacao.latitude, localizacao.longitude)
+            previsaolocal = previsaoTempo.obter(localizacao.latitude, localizacao.longitude)
+            context['temperaturalocal'] = str(round(previsaolocal['main']['temp'], 1))
+            context['nebulosidadelocal'] = str(previsaolocal['clouds']['all']) + ' %'
+            context['umidadelocal'] = str(previsaolocal['main']['humidity']) + ' %'
+            context['cidadelocal'] = str(previsaolocal['name'])
+            context['descricaotempolocal'] = str(previsaolocal['weather'][0]['description'])
+            context['iconetempolocal'] = str(previsaolocal['weather'][0]['icon'])
+
         configuracao = Configuracao.objects.all().first()
         if configuracao:
             context['destino'] = "{0}, {1}".format(configuracao.latitude, configuracao.longitude)
