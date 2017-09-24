@@ -45,7 +45,8 @@ class HomeView(TemplateView):
 
         if self.request.user.is_authenticated():
             perfil = PerfilUsuario.objects.filter(usuario=self.request.user)
-            context['perfilusuario'] = perfil[0]
+            if perfil:
+                context['perfilusuario'] = perfil[0]
 
         localizacao = localizacao = Localizacao.objects.all().first()
         if localizacao:
@@ -57,6 +58,9 @@ class HomeView(TemplateView):
             context['cidadelocal'] = str(previsaolocal['name'])
             context['descricaotempolocal'] = str(previsaolocal['weather'][0]['description'])
             context['iconetempolocal'] = str(previsaolocal['weather'][0]['icon'])
+            if float(localizacao.distancia) > 1:
+                context['distanciacasa'] = localizacao.distancia
+                context['tempodecarrocasa'] = localizacao.tempo_de_carro
 
         configuracao = Configuracao.objects.all().first()
         if configuracao:

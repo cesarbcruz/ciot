@@ -59,22 +59,22 @@
 
         $(document).ready(function () {
             $('#demo-pie-1').pieChart({
-                barColor: '#3bb2d0',
+                barColor: 'red',
                 trackColor: '#eee',
                 lineCap: 'round',
                 lineWidth: 8,
                 onStep: function (from, to, percent) {
-                    $(this.element).find('.pie-value').text(Math.round(percent) + '%');
+                    $(this.element).find('.pie-value').text('UR: '+ Math.round(percent) + '%');
                 }
             });
 
             $('#demo-pie-2').pieChart({
-                barColor: '#fbb03b',
+                barColor: 'green',
                 trackColor: '#eee',
                 lineCap: 'butt',
                 lineWidth: 8,
                 onStep: function (from, to, percent) {
-                    $(this.element).find('.pie-value').text(Math.round(percent) + '%');
+                    $(this.element).find('.pie-value').text('UR: '+ Math.round(percent) + '%');
                 }
             });
 
@@ -90,11 +90,6 @@
 
            
         });
-
-
-
-
-
 
     </script>
     <!--skycons-icons-->
@@ -123,10 +118,6 @@
                 <div class="clearfix"></div>
             </div>
 
-
-            <!-- Brand and toggle get grouped for better mobile display -->
-
-            <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="drop-men">
                 <ul class=" nav_1">
 
@@ -250,17 +241,14 @@
             <div id="page-wrapper" class="gray-bg dashbard-1">
                 <div class="content-main">
 
-                    <!--banner-->
                     <div class="banner">
-
                         <h2>
                             <a href="{% url 'home' %}">Home</a>
                             <i class="fa fa-angle-right"></i>
                             <span>Dashboard</span>
                         </h2>
                     </div>
-                    <!--//banner-->
-                    <!--content-->
+
                     <div class="content-top">
 
                         <!---inicio temperatura---->
@@ -278,42 +266,43 @@
                                             <div class="clearfix"></div>
                                         </div>
                                         <p>
-                                            <label>{{descricaotempocasa|capfirst}}</label>
-                                        </p>
-                                        <p>
-                                            <label>Umidade: {{umidadecasa}}</label>
+                                            <label style="color:Grey">{{descricaotempocasa|capfirst}} em {{cidadecasa}} <i class="fa fa-map-marker" style="color:red"></i></label>
                                         </p>
                                     </div>
                                     <div class="weather-top-right">
-                                        <h4><i class="fa fa-map-marker" style="color:red"></i> {{cidadecasa}}</h4></p>
-                                    </div>
-                                    <div class="clearfix"></div>
-                                </div>
-                                <hr style="height: 10px;  border: 0;  box-shadow: 0 10px 10px -10px #8c8c8c inset;"/>
-                                <div class="weather-top">
-                                    <div class="weather-top-left">
-                                        <div class="degree">
-                                            <figure class="icons">
-                                                <img src="http://openweathermap.org/img/w/{{iconetempolocal}}.png"
-                                                     width="64"
-                                                     height="64">
-                                            </figure>
-                                            <span>{{temperaturalocal}}°</span>
-                                            <div class="clearfix"></div>
+                                        <div class="col-md-6 top-content1">
+                                                <div id="demo-pie-1" class="pie-title-center" data-percent="{{umidadecasa}}"><span
+                                                        class="pie-value"></span></div>
                                         </div>
-                                        <p>
-                                            <label>{{descricaotempolocal|capfirst}}</label>
-                                        </p>
-                                        <p>
-                                            <label>Umidade: {{umidadelocal}}</label>
-                                        </p>
-                                    </div>
-                                    <div class="weather-top-right">
-                                        <h4><i class="fa fa-map-marker" style="color:green"></i> {{cidadelocal}}
-                                        </h4></p>
                                     </div>
                                     <div class="clearfix"></div>
                                 </div>
+                                {% if cidadecasa != cidadelocal %}
+                                    <hr style="height: 10px;  border: 0;  box-shadow: 0 10px 10px -10px #8c8c8c inset;"/>
+                                    <div class="weather-top">
+                                        <div class="weather-top-left">
+                                            <div class="degree">
+                                                <figure class="icons">
+                                                    <img src="http://openweathermap.org/img/w/{{iconetempolocal}}.png"
+                                                         width="64"
+                                                         height="64">
+                                                </figure>
+                                                <span>{{temperaturalocal}}°</span>
+                                                <div class="clearfix"></div>
+                                            </div>
+                                            <p>
+                                                <label style="color:Grey">{{descricaotempolocal|capfirst}} em {{cidadelocal}} <i class="fa fa-map-marker" style="color:green"></i></label>
+                                            </p>
+                                        </div>
+                                        <div class="weather-top-right">
+                                            <div class="col-md-6 top-content1">
+                                                    <div id="demo-pie-2" class="pie-title-center" data-percent="{{umidadelocal}}"><span
+                                                            class="pie-value"></span></div>
+                                            </div>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
                         <!---final temperatura---->
@@ -322,7 +311,11 @@
                         <div class="col-md-8 content-top-2">
                             <div class="content-graph">
                                 <div class="middle-content">
-                                    <h3>Localização</h3>
+                                    {% if distanciacasa %}
+                                        <h4>Você está a {{distanciacasa}} Km de casa, aproximadamente {{tempodecarrocasa}} minutos de carro.</h4>
+                                    {% else %}
+                                        <h3>Você está em casa</h3>
+                                    {% endif %}
                                     <div id="map" style="width: 100%; height: 500px"></div>
 
                                     <script type="text/javascript">
@@ -353,57 +346,12 @@
                             </div>
                         </div>
                         <!-- final mapa --->
-
-
-
                         <div class="clearfix"></div>
                     </div>
 
                     <div class="content-bottom">
-
-
-                        <div class="col-md-4 ">
-                            <div class="content-top-1">
-                                <div class="col-md-6 top-content">
-                                    <h5>Tasks</h5>
-                                    <label>8761</label>
-                                </div>
-                                <div class="col-md-6 top-content1">
-                                    <div id="demo-pie-1" class="pie-title-center" data-percent="25"><span
-                                            class="pie-value"></span></div>
-                                </div>
-                                <div class="clearfix"></div>
-                            </div>
-                            <div class="content-top-1">
-                                <div class="col-md-6 top-content">
-                                    <h5>Points</h5>
-                                    <label>6295</label>
-                                </div>
-                                <div class="col-md-6 top-content1">
-                                    <div id="demo-pie-2" class="pie-title-center" data-percent="50"><span
-                                            class="pie-value"></span></div>
-                                </div>
-                                <div class="clearfix"></div>
-                            </div>
-                            <div class="content-top-1">
-                                <div class="col-md-6 top-content">
-                                    <h5>Cards</h5>
-                                    <label>3401</label>
-                                </div>
-                                <div class="col-md-6 top-content1">
-                                    <div id="demo-pie-3" class="pie-title-center" data-percent="75"><span
-                                            class="pie-value"></span></div>
-                                </div>
-                                <div class="clearfix"></div>
-                            </div>
-                        </div>
-
                         <div class="clearfix"></div>
                     </div>
-                    <!--//content-->
-
-
-                    <!---->
                     <div class="copy">
                         <p> &copy; 2017 Ciot. All Rights Reserved | Design by <a href="http://w3layouts.com/"
                                                                                  target="_blank">César
